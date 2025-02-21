@@ -1,6 +1,6 @@
 import { S3Client, ListBucketsCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
-type RegionId = 'nyc3' | 'sfo3' | 'ams3' | 'sgp1';
+type RegionId = 'nyc3' | 'sfo3' | 'ams3' | 'sgp1' | 'tor1';
 
 interface Credentials {
   accessKeyId: string;
@@ -11,6 +11,7 @@ interface Credentials {
 export class SpacesService {
   private client: S3Client | null = null;
   private static readonly REGIONS: Record<RegionId, string> = {
+    'tor1': 'ca-central-1',
     'nyc3': 'us-east-1',
     'sfo3': 'us-west-1',
     'ams3': 'eu-west-1',
@@ -18,7 +19,7 @@ export class SpacesService {
   };
 
   initialize(credentials: Credentials) {
-    const region = credentials.region || 'nyc3';
+    const region = credentials.region || 'tor1';
     const s3Region = SpacesService.REGIONS[region];
     
     this.client = new S3Client({

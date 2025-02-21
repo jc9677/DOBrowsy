@@ -3,7 +3,7 @@ import { SpacesService } from '../services/SpacesService';
 
 const spacesService = new SpacesService();
 
-type RegionId = 'nyc3' | 'sfo3' | 'ams3' | 'sgp1';
+type RegionId = 'nyc3' | 'sfo3' | 'ams3' | 'sgp1' | 'tor1';
 
 interface Region {
   id: RegionId;
@@ -11,6 +11,7 @@ interface Region {
 }
 
 const REGIONS: Region[] = [
+  { id: 'tor1', name: 'Toronto (TOR1)' },
   { id: 'nyc3', name: 'New York (NYC3)' },
   { id: 'sfo3', name: 'San Francisco (SFO3)' },
   { id: 'ams3', name: 'Amsterdam (AMS3)' },
@@ -20,7 +21,7 @@ const REGIONS: Region[] = [
 export function SpacesBrowser() {
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
-  const [region, setRegion] = useState<RegionId>('nyc3');
+  const [region, setRegion] = useState<RegionId>('tor1');
   const [buckets, setBuckets] = useState<any[]>([]);
   const [currentBucket, setCurrentBucket] = useState('');
   const [objects, setObjects] = useState<any[]>([]);
