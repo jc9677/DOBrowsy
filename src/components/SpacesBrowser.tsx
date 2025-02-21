@@ -14,7 +14,7 @@ export function SpacesBrowser() {
   const [config, setConfig] = useState<Config>({
     accessKeyId: '',
     secretAccessKey: '',
-    region: 'nyc3'
+    region: 'tor1' // Updated default region to tor1
   });
   const [isConfigured, setIsConfigured] = useState(false);
 
@@ -82,6 +82,7 @@ export function SpacesBrowser() {
               onChange={handleChange}
               required
             >
+              <option value="tor1">Toronto (TOR1)</option>
               <option value="nyc3">New York (NYC3)</option>
               <option value="ams3">Amsterdam (AMS3)</option>
               <option value="sgp1">Singapore (SGP1)</option>
