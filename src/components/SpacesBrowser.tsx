@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SpacesService } from '../services/SpacesService';
-
-interface Bucket {
-  Name?: string;
-  CreationDate?: string;
-}
+import { SpacesService, type Bucket } from '../services/SpacesService';
 
 export function SpacesBrowser() {
   const [buckets, setBuckets] = useState<Bucket[]>([]);
