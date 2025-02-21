@@ -1,20 +1,22 @@
 import { useState } from 'react';
-import { SpacesService, type Bucket } from '../services/SpacesService';
+import { SpacesService, type S3Object } from '../services/SpacesService';
 
 interface Config {
   accessKeyId: string;
   secretAccessKey: string;
   region: string;
+  bucketName: string;
 }
 
 export function SpacesBrowser() {
-  const [buckets, setBuckets] = useState<Bucket[]>([]);
+  const [objects, setObjects] = useState<S3Object[]>([]);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState<Config>({
     accessKeyId: '',
     secretAccessKey: '',
-    region: 'tor1' // Updated default region to tor1
+    region: 'tor1',
+    bucketName: ''
   });
   const [isConfigured, setIsConfigured] = useState(false);
 
@@ -27,12 +29,12 @@ export function SpacesBrowser() {
     
     try {
       service.initialize(config);
-      const bucketList = await service.listBuckets();
-      setBuckets(bucketList);
+      const objectList = await service.listObjects(config.bucketName);
+      setObjects(objectList);
       setIsConfigured(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load buckets');
-      setBuckets([]);
+      setError(err instanceof Error ? err.message : 'Failed to load objects');
+      setObjects([]);
     } finally {
       setLoading(false);
     }
@@ -43,11 +45,11 @@ export function SpacesBrowser() {
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
-  if (loading) return <div>Loading buckets...</div>;
+  if (loading) return <div>Loading objects...</div>;
   
   return (
     <div className="spaces-browser">
-      <h2>DigitalOcean Spaces</h2>
+      <h2>DigitalOcean Spaces Browser</h2>
       
       {!isConfigured ? (
         <form onSubmit={handleSubmit} className="config-form">
@@ -90,6 +92,17 @@ export function SpacesBrowser() {
               <option value="fra1">Frankfurt (FRA1)</option>
             </select>
           </div>
+          <div>
+            <label htmlFor="bucketName">Bucket Name:</label>
+            <input
+              type="text"
+              id="bucketName"
+              name="bucketName"
+              value={config.bucketName}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <button type="submit">Connect</button>
         </form>
       ) : (
@@ -99,9 +112,9 @@ export function SpacesBrowser() {
               {error}
               <button onClick={() => setIsConfigured(false)}>Reconfigure</button>
             </div>
-          ) : buckets.length === 0 ? (
+          ) : objects.length === 0 ? (
             <div>
-              No buckets found
+              No objects found in bucket
               <button onClick={() => setIsConfigured(false)}>Reconfigure</button>
             </div>
           ) : (
@@ -110,9 +123,12 @@ export function SpacesBrowser() {
                 Reconfigure
               </button>
               <ul className="bucket-list">
-                {buckets.map(bucket => (
-                  <li key={bucket.Name} className="bucket-item">
-                    {bucket.Name}
+                {objects.map(obj => (
+                  <li key={obj.Key} className="bucket-item">
+                    {obj.Key}
+                    {obj.LastModified && (
+                      <span className="object-date"> - {new Date(obj.LastModified).toLocaleString()}</span>
+                    )}
                   </li>
                 ))}
               </ul>
