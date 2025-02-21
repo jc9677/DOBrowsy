@@ -3,7 +3,14 @@ import { SpacesService } from '../services/SpacesService';
 
 const spacesService = new SpacesService();
 
-const REGIONS = [
+type RegionId = 'nyc3' | 'sfo3' | 'ams3' | 'sgp1';
+
+interface Region {
+  id: RegionId;
+  name: string;
+}
+
+const REGIONS: Region[] = [
   { id: 'nyc3', name: 'New York (NYC3)' },
   { id: 'sfo3', name: 'San Francisco (SFO3)' },
   { id: 'ams3', name: 'Amsterdam (AMS3)' },
@@ -13,7 +20,7 @@ const REGIONS = [
 export function SpacesBrowser() {
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
-  const [region, setRegion] = useState('nyc3');
+  const [region, setRegion] = useState<RegionId>('nyc3');
   const [buckets, setBuckets] = useState<any[]>([]);
   const [currentBucket, setCurrentBucket] = useState('');
   const [objects, setObjects] = useState<any[]>([]);
@@ -64,7 +71,7 @@ export function SpacesBrowser() {
         <div>
           <select 
             value={region} 
-            onChange={(e) => setRegion(e.target.value)}
+            onChange={(e) => setRegion(e.target.value as RegionId)}
             className="region-select"
           >
             {REGIONS.map(region => (
