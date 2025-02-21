@@ -4,6 +4,8 @@ import type { Bucket as S3Bucket } from "@aws-sdk/client-s3";
 interface Credentials {
   accessKeyId: string;
   secretAccessKey: string;
+  region: string;
+  endpoint?: string;
 }
 
 export interface Bucket {
@@ -16,8 +18,8 @@ export class SpacesService {
 
   initialize(credentials: Credentials) {
     this.client = new S3Client({
-      endpoint: 'https://nyc3.digitaloceanspaces.com',
-      region: 'us-east-1',
+      endpoint: credentials.endpoint || `https://${credentials.region}.digitaloceanspaces.com`,
+      region: credentials.region,
       credentials: {
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,

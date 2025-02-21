@@ -157,6 +157,77 @@
   margin: 10px 0;
 }
 
+.config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.config-form div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.config-form label {
+  font-weight: bold;
+}
+
+.config-form input,
+.config-form select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.config-form button,
+.reconfigure-btn {
+  padding: 8px 16px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.config-form button:hover,
+.reconfigure-btn:hover {
+  background-color: #0051b3;
+}
+
+.error-message {
+  color: #dc3545;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #ffe6e6;
+  border-radius: 4px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.bucket-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.bucket-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.reconfigure-btn {
+  margin-bottom: 20px;
+}
+
 @media (prefers-color-scheme: dark) {
   .spaces-browser input,
   .spaces-browser select,
