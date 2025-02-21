@@ -3,9 +3,17 @@ import { SpacesService } from '../services/SpacesService';
 
 const spacesService = new SpacesService();
 
+const REGIONS = [
+  { id: 'nyc3', name: 'New York (NYC3)' },
+  { id: 'sfo3', name: 'San Francisco (SFO3)' },
+  { id: 'ams3', name: 'Amsterdam (AMS3)' },
+  { id: 'sgp1', name: 'Singapore (SGP1)' },
+];
+
 export function SpacesBrowser() {
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
+  const [region, setRegion] = useState('nyc3');
   const [buckets, setBuckets] = useState<any[]>([]);
   const [currentBucket, setCurrentBucket] = useState('');
   const [objects, setObjects] = useState<any[]>([]);
@@ -14,7 +22,7 @@ export function SpacesBrowser() {
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      spacesService.initialize({ accessKeyId, secretAccessKey });
+      spacesService.initialize({ accessKeyId, secretAccessKey, region });
       const bucketList = await spacesService.listBuckets();
       setBuckets(bucketList);
       setError('');
@@ -52,6 +60,19 @@ export function SpacesBrowser() {
             value={secretAccessKey}
             onChange={(e) => setSecretAccessKey(e.target.value)}
           />
+        </div>
+        <div>
+          <select 
+            value={region} 
+            onChange={(e) => setRegion(e.target.value)}
+            className="region-select"
+          >
+            {REGIONS.map(region => (
+              <option key={region.id} value={region.id}>
+                {region.name}
+              </option>
+            ))}
+          </select>
         </div>
         <button type="submit">Connect</button>
       </form>

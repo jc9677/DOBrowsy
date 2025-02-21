@@ -3,16 +3,30 @@ import { S3Client, ListBucketsCommand, ListObjectsV2Command } from "@aws-sdk/cli
 interface Credentials {
   accessKeyId: string;
   secretAccessKey: string;
+  region?: string;
 }
 
 export class SpacesService {
   private client: S3Client | null = null;
+  private static readonly REGIONS = {
+    'nyc3': 'us-east-1',
+    'sfo3': 'us-west-1',
+    'ams3': 'eu-west-1',
+    'sgp1': 'ap-southeast-1',
+  };
 
   initialize(credentials: Credentials) {
+    const region = credentials.region || 'nyc3';
+    const s3Region = SpacesService.REGIONS[region] || 'us-east-1';
+    
     this.client = new S3Client({
-      endpoint: "https://nyc3.digitaloceanspaces.com",
-      region: "us-east-1",
-      credentials
+      endpoint: `https://${region}.digitaloceanspaces.com`,
+      region: s3Region,
+      credentials: {
+        accessKeyId: credentials.accessKeyId,
+        secretAccessKey: credentials.secretAccessKey,
+      },
+      forcePathStyle: false // Required for proper CORS support
     });
   }
 
