@@ -1,4 +1,5 @@
-import { S3Client, ListBucketsCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { S3Client, ListBucketsCommand, ListObjectsCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { Bucket as S3Bucket } from "@aws-sdk/client-s3";
 
 interface Credentials {
@@ -16,6 +17,7 @@ export interface Bucket {
 export interface S3Object {
   Key?: string;
   LastModified?: string;
+  url?: string;
 }
 
 export class SpacesService {
@@ -29,7 +31,10 @@ export class SpacesService {
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
       },
-      forcePathStyle: true
+      forcePathStyle: true,
+      requestHandler: {
+        mode: 'no-cors'
+      }
     });
   }
 
@@ -62,10 +67,24 @@ export class SpacesService {
     try {
       const command = new ListObjectsCommand({ Bucket: bucketName });
       const response = await this.client.send(command);
-      return (response.Contents || []).map(item => ({
-        Key: item.Key,
-        LastModified: item.LastModified ? item.LastModified.toISOString() : undefined
+      
+      // Generate presigned URLs for each object
+      const objects = await Promise.all((response.Contents || []).map(async (item) => {
+        const getObjectCommand = new GetObjectCommand({
+          Bucket: bucketName,
+          Key: item.Key,
+        });
+        
+        const url = await getSignedUrl(this.client!, getObjectCommand, { expiresIn: 3600 }); // URL expires in 1 hour
+        
+        return {
+          Key: item.Key,
+          LastModified: item.LastModified ? item.LastModified.toISOString() : undefined,
+          url: url
+        };
       }));
+      
+      return objects;
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('CORS')) {

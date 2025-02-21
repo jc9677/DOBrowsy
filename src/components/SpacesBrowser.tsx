@@ -125,10 +125,12 @@ export function SpacesBrowser() {
               <ul className="bucket-list">
                 {objects.map(obj => (
                   <li key={obj.Key} className="bucket-item">
-                    {obj.Key}
-                    {obj.LastModified && (
-                      <span className="object-date"> - {new Date(obj.LastModified).toLocaleString()}</span>
-                    )}
+                    <a href={obj.url} target="_blank" rel="noopener noreferrer" className="object-link">
+                      {obj.Key}
+                      {obj.LastModified && (
+                        <span className="object-date"> - {new Date(obj.LastModified).toLocaleString()}</span>
+                      )}
+                    </a>
                   </li>
                 ))}
               </ul>
