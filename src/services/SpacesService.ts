@@ -22,18 +22,7 @@ export class SpacesService {
     const region = credentials.region || 'tor1';
     const s3Region = SpacesService.REGIONS[region];
     
-    // Create a client for bucket operations (ListBuckets)
-    const rootClient = new S3Client({
-      endpoint: 'https://cloud.digitalocean.com',
-      region: s3Region,
-      credentials: {
-        accessKeyId: credentials.accessKeyId,
-        secretAccessKey: credentials.secretAccessKey,
-      },
-      forcePathStyle: false
-    });
-
-    // Create a client for object operations
+    // Create a client for all operations including ListBuckets
     this.client = new S3Client({
       endpoint: `https://${region}.digitaloceanspaces.com`,
       region: s3Region,
@@ -43,13 +32,6 @@ export class SpacesService {
       },
       forcePathStyle: false
     });
-
-    // Replace the client with rootClient just for listBuckets
-    this.listBuckets = async () => {
-      const command = new ListBucketsCommand({});
-      const response = await rootClient.send(command);
-      return response.Buckets || [];
-    };
   }
 
   async listBuckets() {
